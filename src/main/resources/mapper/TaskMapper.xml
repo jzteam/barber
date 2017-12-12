@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.jzteam.barber.dao.TaskDao">
+    <!-- 数据对象映射。 -->
+    <resultMap id="TaskMap" type="cn.jzteam.barber.dao.entity.TaskEntity">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="user_id" property="userId" jdbcType="INTEGER"/>
+        <result column="task" property="task" jdbcType="VARCHAR"/>
+        <result column="date" property="date" jdbcType="VARCHAR"/>
+        <result column="time" property="time" jdbcType="VARCHAR"/>
+        <result column="modifytime" property="modifytime" jdbcType="TIMESTAMP"/>
+        <result column="deleteflag" property="deleteflag" jdbcType="TINYINT"/>
+    </resultMap>
+
+    <!-- 表中所有字段。 -->
+    <sql id="table_all_columns">
+        `id`, `user_id`, `task`, `date`, `time`, `modifytime`, `deleteflag`
+    </sql>
+    
+    <!-- 判断要获取的列。 -->
+    <sql id="sql_query_column">
+        <choose>
+            <when test="query.queryColumnStr != null">${query.queryColumnStr}</when>
+            <otherwise><include refid="table_all_columns"/></otherwise>
+        </choose>
+    </sql>
+
+    <!-- 共用sql部分，根据Query对象生成查询条件。FLOAT类型不支持相等查询 -->
+    <sql id="sql_query_condition">
+        <if test="query.id != null"> AND id = #{query.id, jdbcType=INTEGER} </if>
+        <if test="query.userId != null"> AND user_id = #{query.userId, jdbcType=INTEGER} </if>
+        <if test="query.task != null"> AND task = #{query.task, jdbcType=VARCHAR} </if>
+        <if test="query.date != null"> AND date = #{query.date, jdbcType=VARCHAR} </if>
+        <if test="query.time != null"> AND time = #{query.time, jdbcType=VARCHAR} </if>
+        <if test="query.modifytimeBegin != null"> AND modifytime >= #{query.modifytimeBegin, jdbcType=TIMESTAMP} </if>
+        <if test="query.modifytimeEnd != null"> AND modifytime &lt; #{query.modifytimeEnd, jdbcType=TIMESTAMP} </if>
+        <if test="query.deleteflag != null"> AND deleteflag = #{query.deleteflag, jdbcType=TINYINT} </if>
+    </sql>
+
+    <!-- 判断排序依据。 -->
+    <sql id="sql_order_by">
+        <choose>
+            <when test="query.orderStr != null"> ORDER BY ${query.orderStr} </when>
+            <otherwise> ORDER BY id ASC </otherwise>
+        </choose>
+    </sql>
+
+    
+    
+
+</mapper>
+
