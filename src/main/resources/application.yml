@@ -1,7 +1,7 @@
 # 配置注意项： 在名称和后面的值之间需要至少一个空格，没有空格时会导致该项读取不到。
 spring:
     profiles:
-        active: test
+        active: dev
 ---
 server:
     port: 8080
@@ -23,16 +23,16 @@ mybatis:
         lazy-loading-enabled: false
 
 spring:
-    profiles: test
+    profiles: dev
     application:
-        name: oklink-payboot-remit-zhujizhi
+        name: boot-barber
     datasource:
         # druid的各项配置
         druid:
-            name: payboot
-            url: jdbc:mysql://192.168.10.107:3306/superpay_test?autoReconnect=true&amp;useUnicode=true&amp;characterEncoding=UTF-8
-            username: lekuda
-            password: 123456
+            name: barber
+            url: jdbc:mysql://localhost:3306/barber?autoReconnect=true&amp;useUnicode=true&amp;characterEncoding=UTF-8
+            username: root
+            password: 123123
             driver-class-name: com.mysql.jdbc.Driver
             max-active: 8
             min-idle: 2
