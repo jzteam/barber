@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+	debug="true" 输出logback自己的日志信息。
+	scan="true" 启动扫描配置文件变动。
+	scanPeriod="30 seconds" 自动扫描时间，不指定单位则以milliseconds为单位（单位：milliseconds, seconds, minutes, hours）。
+ -->
+<configuration scan="true" scanPeriod="1 minutes">
+    <!-- property用于设定属性，可以使用${}方式来引用。 -->
+    <property name="log.path" value="/var/log/coin/payboot/"/>
+    <property name="project.name" value="merged"/>
+
+    <!-- 加载该配置文件的时间。 -->
+    <timestamp key="loadTime" datePattern="yyyy-MM-dd HH:mm:ss"/>
+
+    <!-- 上下文名称，用于区分项目。 -->
+    <contextName>${project.name}</contextName>
+
+    <!-- 控制台滚动输出。 -->
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder charset="UTF-8">
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} %-5p %-17c{2} - %m%n</pattern>
+        </encoder>
+        <target>System.out</target>
+    </appender>
+
+    <!-- 记录info级别日志。 -->
+    <appender name="infoRollingFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${log.path}${project.name}info.log</file>
+        <encoder charset="UTF-8">
+            <Pattern>%d{yyyy-MM-dd HH:mm:ss} %-5p %-17c{2} - %m%n</Pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter" >
+            <level>INFO</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${log.path}${project.name}info.log.%d{yyyy-MM-dd}</fileNamePattern>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+    </appender>
+
+    <!-- 记录error级别日志。 -->
+    <appender name="errorRollingFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${log.path}${project.name}error.log</file>
+        <encoder charset="UTF-8">
+            <Pattern>%d{yyyy-MM-dd HH:mm:ss} %-5p %-17c{2} - %m%n</Pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter" >
+            <level>ERROR</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${log.path}${project.name}error.log.%d{yyyy-MM-dd}</fileNamePattern>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+    </appender>
+
+    <!-- 记录数据库慢日志。 -->
+    <appender name="slowRollingFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${log.path}${project.name}slow.log</file>
+        <encoder charset="UTF-8">
+            <Pattern>%d{yyyy-MM-dd HH:mm:ss} %-5p %-17c{2} - %m%n</Pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${log.path}${project.name}slow.log.%d{yyyy-MM-dd}</fileNamePattern>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+    </appender>
+
+    <!-- 记录数据库日志(SQL语句显示)。 -->
+    <appender name="dbRollingFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${log.path}${project.name}db.log</file>
+        <encoder charset="UTF-8">
+            <Pattern>%d{yyyy-MM-dd HH:mm:ss} %-5p %-17c{2} - %m%n</Pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${log.path}${project.name}db.log.%d{yyyy-MM-dd}</fileNamePattern>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+    </appender>
+
+    <!-- druid的StatFilter输出的慢SQL日志。 -->
+    <logger name="com.alibaba.druid.filter.stat.StatFilter" level="ERROR">
+        <appender-ref ref="slowRollingFile"/>
+    </logger>
+    <!-- 普通SQL日志输出。 -->
+    <logger name="druid.sql" level="DEBUG">
+        <appender-ref ref="dbRollingFile"/>
+    </logger>
+
+    <root level="info">
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="infoRollingFile"/>
+        <appender-ref ref="errorRollingFile"/>
+    </root>
+
+</configuration>
